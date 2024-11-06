@@ -3,7 +3,7 @@ import { get_last_stock_by_barcode } from "../services/general_queries_service"
 import { InvoiceRequestBody } from "../types/InvoiceItem.types"
 import { add_invoice_and_items, get_invoice_document_by_invoice_id, get_invoice_document_by_offset } from "../services/invoice_service"
 import { InvoiceItemType } from "../types/InvoiceItem.types"
-import { StockDocument } from "../types/Custom.types"
+// import { StockDocument } from "../types/Custom.types"
 
 export type InvoiceContextType = {
   invoiceItems: InvoiceItemType[] | [],
@@ -21,8 +21,8 @@ export type InvoiceContextType = {
   invoiceId: number,
   nextInvoice: () => void,
   searchInvoice: (inputedInvoiceId: number) => void,
-  switchItemType: (item: InvoiceItemType) => void,
-  addNonScanInvoiceItem: (item: StockDocument, isUnit: boolean, quantity: number) => void
+  // switchItemType: (item: InvoiceItemType) => void,
+  // addNonScanInvoiceItem: (item: StockDocument, isUnit: boolean, quantity: number) => void
 }
 
 export const InvoiceContext = React.createContext<InvoiceContextType>({
@@ -41,8 +41,8 @@ export const InvoiceContext = React.createContext<InvoiceContextType>({
   invoiceId: 0,
   nextInvoice: () => { },
   searchInvoice: (inputedInvoiceId: number) => inputedInvoiceId,
-  switchItemType: (item: InvoiceItemType) => item,
-  addNonScanInvoiceItem: (item: StockDocument, isUnit: boolean, quantity: number) => ({ item, isUnit, quantity })
+  // switchItemType: (item: InvoiceItemType) => item,
+  // addNonScanInvoiceItem: (item: StockDocument, isUnit: boolean, quantity: number) => ({ item, isUnit, quantity })
 })
 
 const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -58,24 +58,15 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
     if (barcode) {
       try {
         const res = await get_last_stock_by_barcode(barcode)
-        // console.log(res?.data)
+        console.log(res?.data)
         const duplicatePc = res?.data?.length > 0 &&
           invoiceItems.length > 0 &&
           res?.data[0]?.pc_barcode === barcode &&
           invoiceItems.find(invoiceItem =>
-            invoiceItem.item_name === res?.data[0]?.item_name &&
-            invoiceItem.unit === res?.data[0]?.pc_unit_name
+            invoiceItem.item_name === res?.data[0]?.item_name 
           )
-
-        const duplicateUnit = res?.data?.length > 0 &&
-          invoiceItems.length > 0 &&
-          res?.data[0]?.barcode === barcode &&
-          invoiceItems.find(invoiceItem =>
-            invoiceItem.item_name === res?.data[0]?.item_name &&
-            invoiceItem.unit === res?.data[0]?.unit_name
-          )
-
-        const i = duplicatePc || duplicateUnit
+        const i = duplicatePc
+        // if it is duplicate pc
         if (i) {
           changeAmount(i.amount + 1, i.number)
         } else if (res?.data?.length > 0 && res?.data[0]?.pc_barcode === barcode) {
@@ -92,144 +83,29 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 item_name: res?.data[0]?.item_name,
                 item_id: res?.data[0]?.item_id,
                 amount: 1,
-                unit: res?.data[0]?.pc_unit_name,
-                unit_name: res?.data[0]?.unit_name,
-                pc_unit_name: res?.data[0]?.pc_unit_name,
-                is_unit: false,
+                // unit: res?.data[0]?.pc_unit_name,
+                // unit_name: res?.data[0]?.unit_name,
+                // pc_unit_name: res?.data[0]?.pc_unit_name,
+                // is_unit: false,
                 price: res?.data[0]?.pc_price,
                 pc_price: res?.data[0]?.pc_price,
-                unit_price: res?.data[0]?.unit_price,
-                cost: res?.data[0]?.pc_cost,
-                unit_cost: res?.data[0]?.unit_cost,
+                // unit_price: res?.data[0]?.unit_price,
+                cost: res?.data[0]?.pc_cost, // subtotoal cost for item
+                // unit_cost: res?.data[0]?.unit_cost,
                 pc_cost: res?.data[0]?.pc_cost,
-                subtotal: subTotal,
-                pcs_per_unit: res?.data[0]?.pcs_per_unit,
+                subtotal: subTotal, //subtotal price for item
+                // pcs_per_unit: res?.data[0]?.pcs_per_unit,
                 total_available_pcs: res?.data[0]?.total_available_pcs,
-                total_available_units: res?.data[0]?.total_available_units
+                // total_available_units: res?.data[0]?.total_available_units
               }])
 
             setTotalPriceOfInvoice(prev => prev + subTotal)
             setInvoiceCost(prevState => prevState + res?.data[0]?.pc_cost)
           }
 
-        } else if (res?.data?.length > 0 && res?.data[0]?.barcode === barcode) {
-
-          if (res?.data[0]?.total_available_units >= 1) {
-            const unitPrice = res?.data[0]?.unit_price || 0
-            const subTotal = unitPrice % 250 === 0 ? unitPrice
-              : unitPrice % 250 >= 125 ? unitPrice - (unitPrice % 250) + 250
-                : unitPrice - (unitPrice % 250)
-
-            setInvoiceItems([
-              ...invoiceItems, {
-                number: (invoiceItems[invoiceItems.length - 1]?.number + 1) || 1,
-                item_name: res?.data[0]?.item_name,
-                item_id: res?.data[0]?.item_id,
-                amount: 1,
-                unit: res?.data[0]?.unit_name,
-                unit_name: res?.data[0]?.unit_name,
-                pc_unit_name: res?.data[0]?.pc_unit_name,
-                is_unit: true,
-                price: res?.data[0]?.unit_price,
-                pc_price: res?.data[0]?.pc_price,
-                unit_price: res?.data[0]?.unit_price,
-                cost: res?.data[0]?.unit_cost,
-                unit_cost: res?.data[0]?.unit_cost,
-                pc_cost: res?.data[0]?.pc_cost,
-                subtotal: subTotal,
-                pcs_per_unit: res?.data[0]?.pcs_per_unit,
-                total_available_pcs: res?.data[0]?.total_available_pcs,
-                total_available_units: res?.data[0]?.total_available_units
-              }])
-
-            setTotalPriceOfInvoice(prev => prev + subTotal)
-            setInvoiceCost(prevState => prevState + res?.data[0]?.unit_cost)
-          }
-        }
+        } 
       } catch (err) {
         console.log(err)
-      }
-    }
-  }
-
-  const addNonScanInvoiceItem = async (item: StockDocument, isUnit: boolean, quantity: number) => {
-    const duplicatePc = invoiceItems.find(invoiceItem =>
-      invoiceItem.item_name === item.item_name
-      && invoiceItem.unit === item.pc_unit_name
-    )
-
-    const duplicateUnit = invoiceItems.find(invoiceItem =>
-      invoiceItem.item_name === item.item_name
-      && invoiceItem.unit === item.unit_name
-    )
-
-    const i = duplicatePc || duplicateUnit
-    if (i) {
-      changeAmount(quantity, i.number)
-    } else if (!isUnit) {
-
-      if (item.total_available_pcs >= quantity) {
-        const r = quantity * item.pc_price
-        const subTotal = r % 250 === 0 ? r
-          : r % 250 >= 125 ? r - (r % 250) + 250
-            : r - (r % 250)
-
-        setInvoiceItems([
-          ...invoiceItems, {
-            number: (invoiceItems[invoiceItems.length - 1]?.number + 1) || 1,
-            item_name: item.item_name,
-            item_id: item.item_id,
-            amount: quantity,
-            unit: item.pc_unit_name,
-            unit_name: item.unit_name,
-            pc_unit_name: item.pc_unit_name,
-            is_unit: false,
-            price: item.pc_price,
-            pc_price: item.pc_price,
-            unit_price: item.unit_price,
-            cost: item.pc_cost * quantity,
-            unit_cost: item.unit_cost,
-            pc_cost: item.pc_cost,
-            subtotal: subTotal,
-            pcs_per_unit: item.pcs_per_unit,
-            total_available_pcs: item.total_available_pcs,
-            total_available_units: item.total_available_units
-          }])
-
-        setTotalPriceOfInvoice(prev => prev + subTotal)
-        setInvoiceCost(prevState => prevState + (item.pc_cost * quantity))
-      }
-    } else {
-      if (item.total_available_units >= quantity) {
-        const r = quantity * item.unit_price
-        const subTotal = r % 250 === 0 ? r
-          : r % 250 >= 125 ? r - (r % 250) + 250
-            : r - (r % 250)
-
-        setInvoiceItems([
-          ...invoiceItems, {
-            number: (invoiceItems[invoiceItems.length - 1]?.number + 1) || 1,
-            item_name: item.item_name,
-            item_id: item.item_id,
-            amount: quantity,
-            unit: item.unit_name,
-            unit_name: item.unit_name,
-            pc_unit_name: item.pc_unit_name,
-            is_unit: true,
-            price: item.unit_price,
-            pc_price: item.pc_price,
-            unit_price: item.unit_price,
-            cost: item.unit_cost * quantity,
-            unit_cost: item.unit_cost,
-            pc_cost: item.pc_cost,
-            subtotal: subTotal,
-            pcs_per_unit: item.pcs_per_unit,
-            total_available_pcs: item.total_available_pcs,
-            total_available_units: item.total_available_units
-          }])
-
-        setTotalPriceOfInvoice(prev => prev + subTotal)
-        setInvoiceCost(prevState => prevState + (item.unit_cost * quantity))
       }
     }
   }
@@ -258,26 +134,28 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
       if (i.number === itemNumber) {
 
-        if (i.is_unit && amount <= i.total_available_units) {
-          const newTotalCost = i.unit_cost * amount
+        // if (i.is_unit && amount <= i.total_available_units) {
+        //   const newTotalCost = i.unit_cost * amount
 
-          setInvoiceCost(prevState => (prevState - i.cost) + newTotalCost)
+        //   setInvoiceCost(prevState => (prevState - i.cost) + newTotalCost)
 
-          let newSubtotal = i.unit_price * amount
-          newSubtotal = newSubtotal % 250 === 0 ? newSubtotal
-            : newSubtotal % 250 >= 125 ? (newSubtotal - (newSubtotal % 250) + 250)
-              : (newSubtotal - (newSubtotal % 250))
+        //   let newSubtotal = i.unit_price * amount
+        //   newSubtotal = newSubtotal % 250 === 0 ? newSubtotal
+        //     : newSubtotal % 250 >= 125 ? (newSubtotal - (newSubtotal % 250) + 250)
+        //       : (newSubtotal - (newSubtotal % 250))
 
-          setTotalPriceOfInvoice(prev => (prev - i.subtotal) + newSubtotal)
+        //   setTotalPriceOfInvoice(prev => (prev - i.subtotal) + newSubtotal)
 
-          return ({
-            ...i,
-            amount: amount,
-            cost: newTotalCost,
-            subtotal: newSubtotal
-          })
+        //   return ({
+        //     ...i,
+        //     amount: amount,
+        //     cost: newTotalCost,
+        //     subtotal: newSubtotal
+        //   })
 
-        } else if (!i.is_unit && amount <= i.total_available_pcs) {
+        // } else 
+        // if (!i.is_unit && amount <= i.total_available_pcs) {
+        if (amount <= i.total_available_pcs) {
 
           let newSubtotal = i.pc_price * amount
           newSubtotal = newSubtotal % 250 === 0 ? newSubtotal
@@ -326,13 +204,13 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         items: invoiceItems.map(i => {
           return {
             item_id: i.item_id,
-            is_unit: i.is_unit,
+            // is_unit: i.is_unit,
             quantity: i.amount,
             price: i.price,
             cost: i.cost / i.amount,
             total_price: i.subtotal,
             total_cost: i.cost,
-            pcs_per_unit: i.pcs_per_unit
+            // pcs_per_unit: i.pcs_per_unit
           }
         })
       }
@@ -358,20 +236,20 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         item_name: invoiceItme.item_name,
         item_id: invoiceItme.item_id,
         amount: invoiceItme.quantity,
-        unit: invoiceItme.is_unit ? invoiceItme.unit_name : invoiceItme.pc_unit_name,
-        unit_name: invoiceItme.unit_name,
-        pc_unit_name: invoiceItme.pc_unit_name,
+        // unit: invoiceItme.is_unit ? invoiceItme.unit_name : invoiceItme.pc_unit_name,
+        // unit_name: invoiceItme.unit_name,
+        // pc_unit_name: invoiceItme.pc_unit_name,
         pc_price: invoiceItme.pc_price,
-        unit_price: invoiceItme.unit_price,
-        is_unit: invoiceItme.is_unit,
+        // unit_price: invoiceItme.unit_price,
+        // is_unit: invoiceItme.is_unit,
         price: invoiceItme.price,
         cost: invoiceItme.total_cost,
-        unit_cost: invoiceItme.unit_cost,
+        // unit_cost: invoiceItme.unit_cost,
         pc_cost: invoiceItme.pc_cost,
         subtotal: invoiceItme.total_price,
-        pcs_per_unit: 0, // We don't store pcs per unit
+        // pcs_per_unit: 0, // We don't store pcs per unit
         total_available_pcs: 0, // We dont store total available pcs and units
-        total_available_units: 0 // We dont store total available pcs and units
+        // total_available_units: 0 // We dont store total available pcs and units
       }))
       setInvoiceItems(prevInvoiceItems)
     }
@@ -394,20 +272,20 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
           item_name: invoiceItme.item_name,
           item_id: invoiceItme.item_id,
           amount: invoiceItme.quantity,
-          unit: invoiceItme.is_unit ? invoiceItme.unit_name : invoiceItme.pc_unit_name,
-          unit_name: invoiceItme.unit_name,
-          pc_unit_name: invoiceItme.pc_unit_name,
+          // unit: invoiceItme.is_unit ? invoiceItme.unit_name : invoiceItme.pc_unit_name,
+          // unit_name: invoiceItme.unit_name,
+          // pc_unit_name: invoiceItme.pc_unit_name,
           pc_price: invoiceItme.pc_price,
-          unit_price: invoiceItme.unit_price,
-          is_unit: invoiceItme.is_unit,
+          // unit_price: invoiceItme.unit_price,
+          // is_unit: invoiceItme.is_unit,
           price: invoiceItme.price,
           cost: invoiceItme.total_cost,
-          unit_cost: invoiceItme.unit_cost,
+          // unit_cost: invoiceItme.unit_cost,
           pc_cost: invoiceItme.pc_cost,
           subtotal: invoiceItme.total_price,
-          pcs_per_unit: 0, // We don't store pcs per unit
+          // pcs_per_unit: 0, // We don't store pcs per unit
           total_available_pcs: 0, // We dont store total available pcs and units
-          total_available_units: 0 // We dont store total available pcs and units
+          // total_available_units: 0 // We dont store total available pcs and units
         }))
         setInvoiceItems(prevInvoiceItems)
       }
@@ -429,67 +307,22 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
         item_name: invoiceItme.item_name,
         item_id: invoiceItme.item_id,
         amount: invoiceItme.quantity,
-        unit: invoiceItme.is_unit ? invoiceItme.unit_name : invoiceItme.pc_unit_name,
-        unit_name: invoiceItme.unit_name,
-        pc_unit_name: invoiceItme.pc_unit_name,
+        // unit: invoiceItme.is_unit ? invoiceItme.unit_name : invoiceItme.pc_unit_name,
+        // unit_name: invoiceItme.unit_name,
+        // pc_unit_name: invoiceItme.pc_unit_name,
         pc_price: invoiceItme.pc_price,
-        unit_price: invoiceItme.unit_price,
-        is_unit: invoiceItme.is_unit,
+        // unit_price: invoiceItme.unit_price,
+        // is_unit: invoiceItme.is_unit,
         price: invoiceItme.price,
         cost: invoiceItme.total_cost,
-        unit_cost: invoiceItme.unit_cost,
+        // unit_cost: invoiceItme.unit_cost,
         pc_cost: invoiceItme.pc_cost,
         subtotal: invoiceItme.total_price,
-        pcs_per_unit: 0, // We don't store pcs per unit
+        // pcs_per_unit: 0, // We don't store pcs per unit
         total_available_pcs: 0, // We dont store total available pcs and units
-        total_available_units: 0 // We dont store total available pcs and units
+        // total_available_units: 0 // We dont store total available pcs and units
       }))
       setInvoiceItems(items)
-    }
-  }
-
-  const switchItemType = (item: InvoiceItemType) => {
-
-    if (invoiceId === 0) {
-      if (!item.is_unit) {
-        if (item.amount <= item.total_available_units) {
-          const unit = item.unit_name
-          const price = item.unit_price
-
-          let newSubtotal = price * item.amount
-          newSubtotal = newSubtotal % 250 === 0 ? newSubtotal
-            : newSubtotal % 250 >= 125 ? (newSubtotal - (newSubtotal % 250) + 250)
-              : (newSubtotal - (newSubtotal % 250))
-
-          setTotalPriceOfInvoice(prev => (prev - item.subtotal) + newSubtotal)
-
-          setInvoiceItems(prev => prev.map((i) => i.number === item.number ?
-            {
-              ...i, unit, price, subtotal: newSubtotal, cost: i.cost - (i.pc_cost * i.amount) + (i.unit_cost * i.amount),
-              is_unit: true
-            } : i))
-
-          setInvoiceCost(prev => prev - (item.pc_cost * item.amount) + (item.unit_cost * item.amount))
-        }
-      } else {
-        const unit = item.pc_unit_name
-        const price = item.pc_price
-
-        let newSubtotal = price * item.amount
-        newSubtotal = newSubtotal % 250 === 0 ? newSubtotal
-          : newSubtotal % 250 >= 125 ? (newSubtotal - (newSubtotal % 250) + 250)
-            : (newSubtotal - (newSubtotal % 250))
-
-        setTotalPriceOfInvoice(prev => (prev - item.subtotal) + newSubtotal)
-
-        setInvoiceItems(prev => prev.map((i) => i.number === item.number ?
-          {
-            ...i, unit, price, subtotal: newSubtotal, cost: i.cost - (i.unit_cost * i.amount) + (i.pc_cost * i.amount),
-            is_unit: false
-          } : i))
-
-        setInvoiceCost(prev => prev - (item.unit_cost * item.amount) + (item.pc_cost * item.amount))
-      }
     }
   }
 
@@ -509,8 +342,8 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
       invoiceId,
       nextInvoice,
       searchInvoice,
-      switchItemType,
-      addNonScanInvoiceItem
+      // switchItemType,
+      // addNonScanInvoiceItem
     }}>
       {children}
     </InvoiceContext.Provider>

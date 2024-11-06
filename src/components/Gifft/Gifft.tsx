@@ -16,7 +16,7 @@ export default function Gifft({ }: Props) {
   return (
     <div className='col-span-1 w-full'>
       <Button onPress={onOpen} radius='none' size='lg' className='bg-forestGreen text-white w-full' >
-        دیاری / سماح
+        پێهێلان / سماح
       </Button>
       <Modal size="sm" dir="rtl" isOpen={isOpen} placement='auto' onOpenChange={onOpenChange} disableAnimation>
         <ModalContent>

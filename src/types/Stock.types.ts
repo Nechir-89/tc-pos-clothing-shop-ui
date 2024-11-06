@@ -1,22 +1,24 @@
 export type Stock = {
   stocking_id?: number,
   date?: Date,
-  unit_cost: number,
-  unit_price: number,
+  unit_cost?: number,
+  unit_price?: number,
   pc_cost: number,
   pc_price: number,
-  amount_in_units: number,
+  amount_in_units?: number,
+  amount_in_pcs: number,
   expire_date?: Date | null,
   user_id: number,
   item_id?: number,
   stocking_note?: string,
   production_date?: Date,
   barcode?: string,
-  pc_barcode?: string
+  pc_barcode: string
 }
 
 export type StockState = {
   amount_in_units?: number,
+  amount_in_pcs?: number,
   approx_profit?: number,
   barcode?: string,
   category_name?: string,

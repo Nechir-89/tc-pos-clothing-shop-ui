@@ -12,19 +12,19 @@ import { useContext, useEffect, useState } from "react";
 import { StockState } from "../../../../types/Stock.types";
 import extractTimeFromDate from "../../../../helpers/extractTimeFromDate";
 import extractDateFromDate from "../../../../helpers/extractDateFromDate";
-import UpdateStockExpireDataModel from "../../../../components/UpdateStockExpireDataModel";
+// import UpdateStockExpireDataModel from "../../../../components/UpdateStockExpireDataModel";
 import UpdateBarcodeModel from "../../../../components/UpdateBarcodeModel";
 import { UserContext, UserContextType } from "../../../../contexts/UserContext";
 import {
-  update_stock_barcodes,
+  // update_stock_barcodes,
   set_stock_state_returned_items_to_supplier,
   delete_stock,
   update_stock_state_damaged_items
 } from "../../../../services/stocks_service";
 import toast, { Toaster } from 'react-hot-toast';
-import SetDamagedItemsModel from "../../../../components/SetDamagedItemsModel";
+// import SetDamagedItemsModel from "../../../../components/SetDamagedItemsModel";
 import formatNumberWithComma from "../../../../helpers/formatNumberWithComma";
-import ReturnToWholesalerModel from "../../../../components/ReturnToWholesalerModel";
+// import ReturnToWholesalerModel from "../../../../components/ReturnToWholesalerModel";
 import UpdateQuantityModel from "../../../../components/UpdateQuantityModel";
 import UpdateCostAndPriceModel from "../../../../components/UpdateCostAndPriceModel";
 
@@ -52,11 +52,11 @@ export default function UpdateStock({ }: Props) {
         <h3 className='font-bold text-lg'>زانیاری</h3>
         <Button
           onClick={() => navigate(-1)}
-          color="primary"
+          color="warning"
           variant="light"
-          size='sm'
-          endContent={<MdArrowBack style={{ fontSize: '20px' }} />}>
-          زڤرێن
+          endContent={<MdArrowBack style={{ fontSize: "20px" }} />}
+        >
+          Back
         </Button>
       </header>
       <section className='p-6'>
@@ -80,21 +80,6 @@ export default function UpdateStock({ }: Props) {
                     <h4 className="text-slate-400	">بەش</h4>
                     <span className='text-sm font-semibold	'>{stock.category_name}</span>
                   </div>
-                  {/* PCs per unit */}
-                  <div>
-                    <h4 className="text-slate-400	">عددێ قطعان بو 1 {stock.unit_name}</h4>
-                    <span className='text-sm font-semibold	'>{stock.pcs_per_unit}</span>
-                  </div>
-                  {/* unit name */}
-                  <div>
-                    <h4 className="text-slate-400	">وحدا مەزن</h4>
-                    <span className='text-sm font-semibold	'>{stock.unit_name}</span>
-                  </div>
-                  {/* unit pc name */}
-                  <div>
-                    <h4 className="text-slate-400	">وحدا بچیك</h4>
-                    <span className='text-sm font-semibold	'>{stock.pc_unit_name}</span>
-                  </div>
                   {/* Inputed date */}
                   <div>
                     <h4 className="text-slate-400	">مێژوا داخلکرنێ</h4>
@@ -107,67 +92,7 @@ export default function UpdateStock({ }: Props) {
               }
             </CardBody>
           </Card>
-          {/* expiration details */}
-          <Card radius="sm" className="" shadow="sm">
-            <CardHeader className='bg-green-900'>
-              <h3 className='font-bold text-slate-100'>سەرڤەچون </h3>
-            </CardHeader>
-            <Divider />
-            <CardBody className='text-right'>
-              {
-                stock && <div className='grid grid-cols-2 gap-3'>
-                  {/* expire date */}
-                  <div>
-                    <h4 className="text-slate-400	"> مێژوا سەرڤەچونێ</h4>
-                    <span dir='ltr' className='text-right text-sm font-semibold	flex gap-x-2 justify-end'>
-                      {/* <span>{stock.expire_date ? extractTimeFromDate(new Date(stock.expire_date || '')) : 'نەهاتیە داخلکرن'}</span> */}
-                      <span>{stock.expire_date ? extractDateFromDate(new Date(stock.expire_date || '')) : 'نەهاتیە داخلکرن'}</span>
-                    </span>
-                  </div>
-                  {/* expired units */}
-                  <div>
-                    <h4 className="text-slate-400	">وحدێن سەرڤەجوی</h4>
-                    <span className='text-sm font-semibold	'>{stock.expired_units} {stock.unit_name}</span>
-                  </div>
-                  {/* expired PCs */}
-                  <div>
-                    <h4 className="text-slate-400	">قطعێن سەرڤەجوی</h4>
-                    <span className='text-sm font-semibold	'>{stock.expired_pcs} {stock.pc_unit_name}</span>
-                  </div>
-                  {/* production date */}
-                  <div>
-                    <h4 className="text-slate-400	"> مێژوا بەرهەمهێنانا موادی</h4>
-                    <span dir='ltr' className='text-right text-sm font-semibold	flex gap-x-2 justify-end'>
-                      {/* <span>{stock.production_date ? extractTimeFromDate(new Date(stock.production_date || '')) : 'نەهاتیە داخلکرن'}</span> */}
-                      <span>{stock.production_date ? extractDateFromDate(new Date(stock.production_date || '')) : 'نەهاتیە داخلکرن'}</span>
-                    </span>
-                  </div>
-                </div>
-              }
-            </CardBody>
-            <CardFooter dir='ltr'>
-              {
-                stock && <UpdateStockExpireDataModel
-                  stocking_id={stock?.stocking_id || 0}
-                  expireDate={stock?.expire_date || null}
-                  // productionDate={stock?.production_date || null}
-                  expUnits={stock?.expired_units || 0}
-                  expPcs={stock?.expired_pcs || 0}
-                  currentPcs={stock?.current_pcs || 0}
-                  currentUnits={stock?.current_units || 0}
-                  itemId={stock?.item_id || 0}
-                  stateId={stock?.state_id || 0}
-                  changeExpireDate={(newExpireDate: Date) => setStock({ ...stock, expire_date: newExpireDate })}
-                  changeCurrentQuantity={(currentUnits: number, currentPcs: number) => setStock({
-                    ...stock,
-                    current_units: 0,
-                    current_pcs: 0,
-                    expired_units: currentUnits,
-                    expired_pcs: currentPcs
-                  })} />
-              }
-            </CardFooter>
-          </Card>
+        
           {/* Quantity details */}
           <Card radius="sm" className="" shadow="sm">
             <CardHeader className='bg-green-900'>
@@ -177,31 +102,17 @@ export default function UpdateStock({ }: Props) {
             <CardBody className='text-right'>
               {
                 stock && <div className='grid grid-cols-2 gap-3'>
-                  {/* inputed units*/}
-                  <div>
-                    <h4 className="text-slate-400	"> وحدێن داخل کری</h4>
-                    <span className='text-sm font-semibold	flex gap-x-2'>
-                      <span>{Math.floor(stock?.amount_in_units || 0)}</span>
-                      <span>{stock.unit_name}</span>
-                    </span>
-                  </div>
                   {/* inputed pcs */}
                   <div>
-                    <h4 className="text-slate-400	">قطعێن داخل کری</h4>
+                    <h4 className="text-slate-400	">داخل کرن</h4>
                     <span className='text-sm font-semibold	flex gap-x-2'>
-                      <span>{Math.round((stock?.amount_in_units || 0) * (stock?.pcs_per_unit || 0) % (stock?.pcs_per_unit || 0))}</span>
-                      <span>{stock.pc_unit_name}</span>
+                      <span>{stock?.amount_in_pcs || 0}</span>
                     </span>
-                  </div>
-                  {/* current number of units*/}
-                  <div>
-                    <h4 className="text-slate-400	"> وحدێن ماین</h4>
-                    <span className='text-sm font-semibold	'>{(stock.current_units || 0)} {stock.unit_name}</span>
                   </div>
                   {/* current number of pcs */}
                   <div>
                     <h4 className="text-slate-400	">قطعێن ماین</h4>
-                    <span className='text-sm font-semibold	'>{stock.current_pcs} {stock.pc_unit_name}</span>
+                    <span className='text-sm font-semibold	'>{stock?.current_pcs || 0}</span>
                   </div>
                 </div>
               }
@@ -215,23 +126,14 @@ export default function UpdateStock({ }: Props) {
                   state_id={stock?.state_id || 0}
 
                   current_pcs={stock?.current_pcs || 0}
-                  current_units={stock?.current_units || 0}
+                  amount_in_pcs={stock?.amount_in_pcs || 0}
 
-                  unit_name={stock?.unit_name || ''}
-                  pc_unit_name={stock?.pc_unit_name || ''}
+                  old_quantity_in_pcs={stock?.amount_in_pcs || 0}
 
-                  pcs_per_unit={stock?.pcs_per_unit || 0}
-
-                  amount_in_units={Math.floor(stock?.amount_in_units || 0)}
-                  amount_in_pcs={Math.round((stock?.amount_in_units || 0) * (stock?.pcs_per_unit || 0) % (stock?.pcs_per_unit || 0))}
-
-                  old_quantity_in_units={stock?.amount_in_units || 0}
-
-                  updateQuantity={(amountInUnits: number, currentUnits: number, currentPcs: number) => {
+                  updateQuantity={(newAmountInPcs: number, currentPcs: number) => {
                     setStock({
                       ...stock,
-                      amount_in_units: amountInUnits,
-                      current_units: currentUnits,
+                      amount_in_pcs: newAmountInPcs,
                       current_pcs: currentPcs
                     })
                   }} />
@@ -247,24 +149,14 @@ export default function UpdateStock({ }: Props) {
             <CardBody className='text-right'>
               {
                 stock && <div className='grid grid-cols-2 gap-3'>
-                  {/* Unit cost*/}
-                  <div>
-                    <h4 className="text-red-400	">بهایێ کرینا {stock.unit_name}</h4>
-                    <span className='text-sm font-semibold	text-red-700'>{formatNumberWithComma(stock?.unit_cost || 0)}</span>
-                  </div>
-                  {/* Unit Price*/}
-                  <div>
-                    <h4 className="text-teal-500	">بهایێ فروتنا {stock.unit_name}</h4>
-                    <span className='text-sm font-semibold	text-green-700'>{formatNumberWithComma(stock?.unit_price || 0)}</span>
-                  </div>
                   {/* PC cost*/}
                   <div>
-                    <h4 className="text-red-400	"> بهایێ کرینا {stock.pc_unit_name}</h4>
+                    <h4 className="text-red-400	">بهایێ کرینا</h4>
                     <span className='text-sm font-semibold	text-red-700'>{formatNumberWithComma(stock?.pc_cost || 0)}</span>
                   </div>
                   {/* PC Price*/}
                   <div>
-                    <h4 className="text-teal-500	"> بهایێ فروتنا {stock.pc_unit_name}</h4>
+                    <h4 className="text-teal-500	">بهایێ فروتنا</h4>
                     <span className='text-sm font-semibold	text-green-700'>{formatNumberWithComma(stock?.pc_price || 0)}</span>
                   </div>
                 </div>
@@ -274,22 +166,14 @@ export default function UpdateStock({ }: Props) {
               {
                 stock && <UpdateCostAndPriceModel
                   stocking_id={stock?.stocking_id || 0}
-                  unit_cost={stock?.unit_cost || 0}
-                  unit_price={stock?.unit_price || 0}
+                  
                   pc_cost={stock?.pc_cost || 0}
                   pc_price={stock?.pc_price || 0}
-                  pcs_per_unit={stock?.pcs_per_unit || 0}
-                  unit_name={stock?.unit_name || ''}
-                  pc_unit_name={stock?.pc_unit_name || ''}
                   updateCostAndPrice={(
-                    unitCost: number,
-                    unitPrice: number,
                     pcCost: number,
                     pcPrice: number) => {
                     setStock({
                       ...stock,
-                      unit_price: unitPrice,
-                      unit_cost: unitCost,
                       pc_price: pcPrice,
                       pc_cost: pcCost
                     })
@@ -307,14 +191,9 @@ export default function UpdateStock({ }: Props) {
             <CardBody className='text-right'>
               {
                 stock && <div className='grid grid-cols-2 gap-3'>
-                  {/* unit barcode*/}
-                  <div>
-                    <h4 className="text-slate-400	"> بارکودێ وحدێ</h4>
-                    <span className='text-sm font-semibold	'>{stock.barcode ? stock.barcode : 'نەهاتیە دیارکرن'}</span>
-                  </div>
                   {/* inputed pcs */}
                   <div>
-                    <h4 className="text-slate-400	">بارکودێ قطعەی</h4>
+                    <h4 className="text-slate-400	">بارکود</h4>
                     <span className='text-sm font-semibold	'>
                       {stock.pc_barcode ? stock.pc_barcode : 'نەهاتیە دیارکرن'}
                     </span>
@@ -326,27 +205,11 @@ export default function UpdateStock({ }: Props) {
               {
                 stock && <UpdateBarcodeModel
                   stocking_id={stock?.stocking_id || 0}
-                  barcode={String(stock.barcode)}
                   pcBarcode={String(stock.pc_barcode)}
-                  updateBarcodes={(barcode, pcBarcode) => setStock({
+                  updateBarcodes={(pcBarcode) => setStock({
                     ...stock,
-                    barcode: String(barcode),
                     pc_barcode: String(pcBarcode)
                   })} />
-              }
-              {
-                stock && <Button size='sm' color='secondary' variant="light" radius="sm"
-                  isDisabled={(stock?.barcode || stock?.pc_barcode) ? false : true}
-                  // className='text-slate-100'
-                  onClick={async () => {
-                    const resp = await update_stock_barcodes(stock.stocking_id || 0, '', '')
-                    if (resp?.data.stocking_id === stock.stocking_id) {
-                      toast.success('هاتە گوهارتن بو بێ بارکودی')
-                      setStock({ ...stock, barcode: '', pc_barcode: '' })
-                    } else {
-                      toast.error('سیستەم نەشێت بگوهریت بو بێ بارکودی')
-                    }
-                  }}>گوهارتن بو بێ  بارکود</Button>
               }
             </CardFooter>
           </Card>
@@ -377,7 +240,8 @@ export default function UpdateStock({ }: Props) {
             <CardFooter dir='ltr' className='flex gap-2'>
               {
                 stock && <Button size='sm' color='secondary' radius="sm" variant="light"
-                  isDisabled={stock?.current_pcs === 0}
+                  // isDisabled={stock?.current_pcs === 0}
+                  isDisabled
                   onClick={async () => {
                     const resp = await update_stock_state_damaged_items(
                       stock?.state_id || 0,
@@ -406,7 +270,7 @@ export default function UpdateStock({ }: Props) {
                     }
                   }}>تەلەفکرن هەمیان</Button>
               }
-              {
+              {/* {
                 stock && <SetDamagedItemsModel
                   state_id={stock.state_id || 0}
                   item_id={stock.item_id || 0}
@@ -431,7 +295,7 @@ export default function UpdateStock({ }: Props) {
                   }}
                   pcs_per_unit={stock.pcs_per_unit || 0}
                 />
-              }
+              } */}
             </CardFooter>
           </Card>
           {/* gifted items */}
@@ -486,7 +350,8 @@ export default function UpdateStock({ }: Props) {
             <CardFooter dir='ltr' className='flex gap-2'>
               {
                 stock && <Button size='sm' color='secondary' variant="light" radius="sm"
-                  isDisabled={(stock?.current_pcs !== 0) ? false : true}
+                  // isDisabled={(stock?.current_pcs !== 0) ? false : true}
+                  isDisabled
                   onClick={async () => {
                     const resp = await set_stock_state_returned_items_to_supplier(
                       stock?.state_id || 0,
@@ -516,7 +381,7 @@ export default function UpdateStock({ }: Props) {
                   }}>زڤراندنا هەمیان</Button>
               }
 
-              {
+              {/* {
                 stock && <ReturnToWholesalerModel
                   state_id={stock.state_id || 0}
                   item_id={stock.item_id || 0}
@@ -541,7 +406,7 @@ export default function UpdateStock({ }: Props) {
                   }}
                   pcs_per_unit={stock.pcs_per_unit || 0}
                 />
-              }
+              } */}
 
             </CardFooter>
           </Card>
@@ -549,9 +414,9 @@ export default function UpdateStock({ }: Props) {
         </div>
         <div dir='rtl' className='flex p-4 pt-6'>
           {stock && <Button
-            size='sm'
+            size='md'
             className='bg-red-600 text-slate-100'
-            isDisabled={(stock.current_units || 0) !== (stock.amount_in_units || 0)}
+            isDisabled={(stock.current_pcs || 0) !== (stock.amount_in_pcs || 0)}
             onClick={async () => {
               const confirm = window.confirm('تو یێ پشراستی تە ڤێت ئەڤ ستوکە ژێ بچیت؟')
               if (confirm) {

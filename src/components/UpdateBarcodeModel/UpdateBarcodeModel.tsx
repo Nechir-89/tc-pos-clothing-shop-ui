@@ -10,14 +10,14 @@ import toast, { Toaster } from 'react-hot-toast';
 
 type Props = {
   stocking_id: number,
-  barcode: string | null,
+  // barcode: string | null,
   pcBarcode: string | null,
-  updateBarcodes: (barcode: string | null, pcBarcode: string | null) => void
+  updateBarcodes: (pcBarcode: string | null) => void
 }
 
 export default function UpdateBarcodeModel({
   stocking_id,
-  barcode,
+  // barcode,
   // productionDate,
   pcBarcode,
   updateBarcodes
@@ -28,7 +28,7 @@ export default function UpdateBarcodeModel({
   // const [expiredPcs, setExpiredPcs] = useState<number>(expPcs)
   // const [expiredUnits, setExpiredUnits] = useState<number>(expUnits)
   const [loading, setLoading] = useState<boolean>(false)
-  const [newBarcode, setNewBarcode] = useState<string | null>(barcode)
+  // const [newBarcode, setNewBarcode] = useState<string | null>(barcode)
   const [newPcBarcode, setNewPcBarcode] = useState<string | null>(pcBarcode)
 
   // const updateExpireDate = async () => {
@@ -41,7 +41,7 @@ export default function UpdateBarcodeModel({
   // }
 
   useEffect(() => {
-    setNewBarcode(barcode)
+    // setNewBarcode(barcode)
     setNewPcBarcode(pcBarcode)
     // setNewProductionDate(productionDate)
   }, [])
@@ -54,12 +54,12 @@ export default function UpdateBarcodeModel({
     // 2. When editing barcodes they should not be same as the old barcodes 
     // (i.e at least one of barcodes must be different)
 
-    if (newBarcode !== barcode || newPcBarcode !== pcBarcode) {
-      if (newBarcode !== '' || newPcBarcode !== '') {
-        const resp = await update_stock_barcodes(stocking_id, newBarcode, newPcBarcode)
+    if (newPcBarcode !== pcBarcode) {
+      if (newPcBarcode !== '') {
+        const resp = await update_stock_barcodes(stocking_id, newPcBarcode)
         resp && setLoading(false)
         if (resp?.data.stocking_id === stocking_id) {
-          updateBarcodes(newBarcode, newPcBarcode)
+          updateBarcodes(newPcBarcode)
           toast.success('بارکود هاتە گوهارتن')
         }else{
           toast.error('سیستەم نەشێت بارکودی گوهریت')
@@ -90,13 +90,6 @@ export default function UpdateBarcodeModel({
               <ModalBody className='flex flex-col gap-2'>
                 <div>
                   <label className='block pb-1'>بارکود</label>
-                  <Input dir='ltr' type="text" className='' radius="sm"
-                    style={{ textAlign: 'left' }} value={String(newBarcode)}
-                    onChange={(e) => setNewBarcode(() => e.target.value)} />
-                </div>
-                <div>
-                  <label className='block pb-1'>بارکودێ قطعەی</label>
-                  {/* item: pc barcode */}
                   <Input dir='ltr' type="text" radius="sm"
                     style={{ textAlign: 'left' }} value={String(newPcBarcode)}
                     onChange={(e) => setNewPcBarcode(() => e.target.value)} />
@@ -106,7 +99,7 @@ export default function UpdateBarcodeModel({
                 {
                   loading ? <Spinner size="sm" color="primary" />
                     : <Button size='sm' color="primary" onClick={submitNewBarcods}>
-                      گوهارتن
+                      Save
                     </Button>}
               </ModalFooter>
             </>

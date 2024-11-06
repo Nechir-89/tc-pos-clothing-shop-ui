@@ -3,11 +3,9 @@ const stockUri = `http://localhost:5002/api/stocks`
 const stockStateUri = `http://localhost:5002/api/states/stocks/`
 const updateStockExpireDateUri = `http://localhost:5002/api/stocks/update/expire_date`
 
-export type NewStock = Stock & { pcs_per_unit: number };
-
 import axios from 'axios'
 
-export const add_new_stock = async (model: NewStock) => {
+export const add_new_stock = async (model: Stock) => {
   let response;
   try {
     response = await axios.post(`${stockUri}/new`, model)
@@ -76,13 +74,11 @@ export const update_stocks_state_expire = async (
 
 export const update_stock_barcodes = async (
   stocking_id: number,
-  barcode: string | null,
   pc_barcode: string | null) => {
   let response;
   try {
     response = await axios.put(`${stockUri}/update/barcodes`, {
       stocking_id,
-      barcode,
       pc_barcode
     })
   } catch (error) {
@@ -146,23 +142,21 @@ export const delete_stock = async (
   return response
 }
 
-export const update_stock_amount_in_units = async (
+export const update_stock_amount_in_pcs = async (
   item_id: number,
   stocking_id: number,
   state_id: number,
-  newtotalQuantityInUnits: number,
-  old_quantity_in_units: number,
-  newCurrentUnits: number,
+  newAmountInPcs: number,
+  old_quantity_in_pcs: number,
   newCurrentPcs: number) => {
   let response;
   try {
-    response = await axios.put(`${stockUri}/update/amount_in_units`, {
+    response = await axios.put(`${stockUri}/update/amount_in_pcs`, {
       item_id,
       stocking_id,
       state_id,
-      newtotalQuantityInUnits,
-      old_quantity_in_units,
-      newCurrentUnits,
+      newAmountInPcs,
+      old_quantity_in_pcs,
       newCurrentPcs
     })
   } catch (error) {
@@ -173,16 +167,12 @@ export const update_stock_amount_in_units = async (
 
 export const update_stock_cost_and_price = async (
   stocking_id: number,
-  unit_cost: number,
-  unit_price: number,
   pc_cost: number,
   pc_price: number) => {
   let response;
   try {
     response = await axios.put(`${stockUri}/update/cost_and_price`, {
       stocking_id,
-      unit_cost,
-      unit_price,
       pc_cost,
       pc_price
     })

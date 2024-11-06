@@ -68,8 +68,9 @@ export const generateHtmlForPrinting = ({ columnsToPrint, rowsToPrint, beg, end 
     </head>
     <body>
       <header>
-        <h2 style='text-align: center;'>مارکێتا سەرهەلدان</h2>
-        <p style='font-size: 12px; text-align: center;'>0750 417 2971 - 0750 376 1655</p>
+        <h2 style='text-align: center;'>PSHE KIDS</h2>
+        <p style='font-size: 12px; text-align: center;'>0750 875 8390</p>
+        <p style='font-size: 12px; text-align: center;'>سوشال میدیا: pshe_kids</p>
       </header style='margin-bottom: 1rem;'>
       <section>${beg}</section>
       <section>
@@ -83,7 +84,7 @@ export const generateHtmlForPrinting = ({ columnsToPrint, rowsToPrint, beg, end 
         </table>
       </section>
       <section class='end-content' dir='rtl' style='margin-top: 0.5rem;'>${end}</section>
-      <p style='font-size: 12px'>تێبینی: پشتی 24 دەمژمێرا زڤراندن یان گوهرین نا هێتە وەرگرتن </p>
+      <p style='font-size: 12px'>تێبینی: پشتی 3 روژان زڤراندن یان گوهرین نا هێتە وەرگرتن </p>
     </body>
   </html>
   `);
