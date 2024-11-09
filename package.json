@@ -1,7 +1,7 @@
 {
   "name": "tc-pos-client",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "POS system for single point of sale",
   "author": "Techcamp",
   "scripts": {

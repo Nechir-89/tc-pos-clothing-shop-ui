@@ -18,12 +18,13 @@ This system works great, However it lacks primary features
 like 
 1. returning an item
 1. invoices page
-1. Complex statistic
-1. Shop expenses (rent, electericity, cashier, and other expenses)
+1. Reports and Shop expenses (rent, electericity, cashier, and other expenses)
 1. Dynamic shop information for invoice 
 1. Systme must run for one year only
+1. Giving items to people as a gift
+1. Documentation
 
-### VERSION 1.1.0
+### VERSION 1.1.0: Add return item
 - This minor version introduces return items feature
 - invoices type can be either "sale" or "return"
   "sale" for saling items
@@ -47,4 +48,6 @@ like
 
 - in dashboard we must check invoice type is sale or return so we could drive statistics.
 
+### VERSION 1.1.1: Add invoice type to invoice receipt
 
+### VERSION 1.2.0: Add reports

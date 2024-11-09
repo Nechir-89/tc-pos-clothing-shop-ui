@@ -101,7 +101,9 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({
         const i = duplicatePc;
         // if it is duplicate pc
         if (i) {
-          if( (i.amount + 1) <= i.valid_quantity_to_return)
+          if( invoiceType === 'return' && (i.amount + 1) <= i.valid_quantity_to_return)
+            changeAmount(i.amount + 1, i.number);
+          else if(invoiceType === 'sale') 
             changeAmount(i.amount + 1, i.number);
         } else if (res?.data?.length > 0 && invoiceType === "sale") {
           if (res?.data[0]?.total_available_pcs >= 1) {
