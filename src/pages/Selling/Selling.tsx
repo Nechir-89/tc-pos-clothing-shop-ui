@@ -40,14 +40,14 @@ import {
 } from "../../contexts/InvoiceContext";
 import Gifft from "../../components/Gifft";
 import InvoiceSearch from "../../components/InvoiceSearch";
-// import { TbArrowsExchange2 } from "react-icons/tb";
-// import NonScanItemsModel from "../../components/NonScanItemsModel";
 import SelectingPaymentModel from "../../components/SelectingPaymentModel";
 import { get_active_payment_methods } from "../../services/payment_methods_service";
 import { PaymentMethod } from "../../types/PaymentMethod.types";
 import { FiPrinter } from "react-icons/fi";
 import { generateHtmlForPrinting } from "../../helpers/GeneratingHTMLForPrinting";
 import extractDateFromDate from "../../helpers/extractDateFromDate";
+import { FaCartArrowDown } from "react-icons/fa6";
+
 type Props = {};
 
 const columns = [
@@ -90,7 +90,8 @@ export default function Selling({}: Props) {
     prevInvoice,
     invoiceId,
     nextInvoice,
-    // switchItemType
+    invoiceType,
+    updateInvoiceType,
   } = useContext(InvoiceContext) as InvoiceContextType;
 
   const [selectedInvoiceItem, setSelectedInvoiceItem] =
@@ -200,13 +201,26 @@ export default function Selling({}: Props) {
       <div className="col-span-6 px-6 pt-6 	flex flex-col">
         {/* barcode and invoice price */}
         <div className="flex items-center	gap-x-8	">
-          <p
-            dir="ltr"
-            className="w-72 justify-self-start text-green-800 font-bold text-3xl tracking-wide	"
-          >
-            {formatNumberWithComma(totalPriceOfInvoice - gifft)}
-            <sub className="text-gray-500 font-normal	text-sm	"> IQD</sub>
-          </p>
+          {invoiceType === "sale" ? (
+            <p
+              dir="ltr"
+              className="w-72 justify-self-start text-green-800 font-bold text-3xl tracking-wide"
+            >
+              {formatNumberWithComma(totalPriceOfInvoice - gifft)}
+              <sub className="text-gray-500 font-normal	text-sm	"> IQD</sub>
+            </p>
+          ) : (
+            <div className={`w-80 flex items-center	gap-x-2 pl-4`}>
+              <FaCartArrowDown className="text-[32px] text-yellow-700" />
+              <span className="text-yellow-700">
+              زڤراندن
+              </span>
+              <span className="font-bold text-yellow-700">
+                {formatNumberWithComma(totalPriceOfInvoice - gifft)}
+                <sub className="font-normal	text-sm	"> IQD</sub>
+              </span>
+            </div>
+          )}
           <Input
             autoFocus
             dir="ltr"
@@ -257,7 +271,7 @@ export default function Selling({}: Props) {
               // @ts-ignore
               const valuesIterator = keys.values();
               const firstElement = valuesIterator.next().value;
-              console.log(firstElement);
+              // console.log(firstElement);
               // for (const value of keys.values())
               //   console.log(value)
 
@@ -267,7 +281,7 @@ export default function Selling({}: Props) {
                   )
                 : setSelectedInvoiceItem(null);
             }}
-            color="secondary"
+            // color="secondary"
             isHeaderSticky
             aria-label="invoice items table"
             // radius='sm'
@@ -279,10 +293,10 @@ export default function Selling({}: Props) {
               // table: "min-h-[420px]",
             }}
           >
-            <TableHeader columns={columns} className="rounded-none bg-gray-800">
+            <TableHeader columns={columns} className={`rounded-none`}>
               {(column) => (
                 <TableColumn
-                  className="text-right bg-gray-800 text-white text-base rounded-none"
+                  className={`bg-gray-800 text-right text-white text-base rounded-none`}
                   key={column.key}
                 >
                   {column.label}
@@ -310,6 +324,8 @@ export default function Selling({}: Props) {
                             itemNumber={item.number}
                             variant="icon"
                             availableAmount={item.total_available_pcs}
+                            validQuantityToReturn={item.valid_quantity_to_return}
+                            invoiceType={invoiceType}
                           />
                         </span>
                         {formatNumberWithComma(getKeyValue(item, columnKey))}
@@ -325,21 +341,27 @@ export default function Selling({}: Props) {
         </div>
         {/* cards */}
         <div className="mt-auto flex gap-4">
-          <article className="bg-white px-4 py-2 rounded-md shadow-md">
+          <article className="bg-sky-800 text-white px-4 py-2 rounded-md shadow-md">
             <h3 className="font-bold text-base">کوێ گشتی</h3>
             <div className="mt-2 font-medium	">
               {formatNumberWithComma(totalPriceOfInvoice)}
             </div>
           </article>
-          <article className="bg-white px-4 py-2 rounded-md shadow-md">
+          <article className="bg-sky-800 text-white px-4 py-2 rounded-md shadow-md">
             <h3 className="font-bold text-base">Tax / ظریبە</h3>
             <div className="mt-2 font-medium	">{formatNumberWithComma(0)}</div>
           </article>
-          <article className="bg-white px-4 py-2 rounded-md shadow-md">
-            <h3 className="font-bold">دیاری / سماح</h3>
+          <article className="bg-sky-800 text-white px-4 py-2 rounded-md shadow-md">
+            <h3 className="font-bold">
+              {invoiceType === "sale" ? "پێهێلان" : "برین"}
+            </h3>
             <div className="mt-2 font-medium	">
               {formatNumberWithComma(gifft)}
             </div>
+          </article>
+          <article className="bg-sky-800 text-white px-4 py-2 rounded-md shadow-md">
+            <h3 className="font-bold">داشکاندن</h3>
+            <div className="mt-2 font-medium	">{formatNumberWithComma(0)}</div>
           </article>
         </div>
       </div>
@@ -356,8 +378,52 @@ export default function Selling({}: Props) {
               submitInvoice({ userId: user?.user_id || 0, paymentMethodId })
             }
           >
-            پارەدان / دفع
+            خەزنکرن
           </Button>
+          <Button
+            radius="none"
+            size="lg"
+            variant={invoiceType === "sale" ? "bordered" : "solid"}
+            className={`${
+              invoiceType === "sale"
+                ? "bg-gray-700 text-white "
+                : "text-gray-700 "
+            } w-full`}
+            onClick={() => {
+              updateInvoiceType("sale");
+            }}
+          >
+            فروتن
+          </Button>
+          <Button
+            radius="none"
+            size="lg"
+            variant={invoiceType === "return" ? "bordered" : "solid"}
+            className={`${
+              invoiceType === "return"
+                ? "bg-yellow-700 text-white "
+                : "text-yellow-700 "
+            } w-full`}
+            onClick={() => {
+              updateInvoiceType("return");
+            }}
+          >
+            زڤراندن
+          </Button>
+        </div>
+        <div className="grid grid-cols-3 gap-2 mb-2">
+          <Button
+            radius="none"
+            size="lg"
+            className="bg-forestGreen text-white w-full "
+            startContent={<FiPrinter />}
+            onClick={() => {
+              if (invoiceItems.length > 0) handlePrint();
+            }}
+          >
+            Print
+          </Button>
+
           <Button
             radius="none"
             size="lg"
@@ -376,22 +442,6 @@ export default function Selling({}: Props) {
           >
             پاقژکرن
           </Button>
-        </div>
-        {/* Non scan */}
-        <div className="grid grid-cols-3 gap-2 mb-2">
-          <Button
-            radius="none"
-            size="lg"
-            className="bg-forestGreen text-white w-full "
-            startContent={<FiPrinter />}
-            onClick={() => {
-              if (invoiceItems.length > 0) handlePrint();
-            }}
-          >
-            Print
-          </Button>
-          {/* <NonScanItemsModel /> */}
-          <Gifft />
         </div>
         {/* search items, and invoices, discounts */}
         <div className="grid grid-cols-3 gap-2 mb-2">
@@ -443,7 +493,7 @@ export default function Selling({}: Props) {
             setSelectedPaymentMethod={setSelectedPaymentMethod}
           />
         </div>
-        {/* 4 5 6 non scan*/}
+        {/* 4 5 6 */}
         <div className="grid grid-cols-9 gap-2 mb-2">
           <Button
             radius="none"
@@ -537,22 +587,14 @@ export default function Selling({}: Props) {
           >
             00
           </Button>
-          <Button
-            isDisabled={user?.role !== "admin"}
-            radius="none"
-            size="lg"
-            className="bg-forestGreen text-white w-full col-span-3"
-            onClick={() => navigate("/app/dashboard")}
-          >
-            سەرەکی
-          </Button>
+          <Gifft />
         </div>
-        {/* up, enter, return */}
+        {/* up, enter, dashboard */}
         <div className="grid grid-cols-12 gap-x-2 mb-2">
           <Button
             radius="none"
             size="lg"
-            className="bg-gray-700 text-white w-full col-span-3"
+            className={`bg-gray-700 text-white w-full col-span-3`}
             onClick={() => prevInvoice()}
           >
             <TiArrowSortedUp className="text-5xl	" />
@@ -575,13 +617,15 @@ export default function Selling({}: Props) {
           >
             Enter
           </Button>
+          {/* main (dashboard) */}
           <Button
-            isDisabled
+            isDisabled={user?.role !== "admin"}
             radius="none"
             size="lg"
             className="bg-forestGreen text-white w-full col-span-4"
+            onClick={() => navigate("/app/dashboard")}
           >
-            زڤراندن
+            سەرەکی
           </Button>
         </div>
         {/* down, back, clear,  */}
@@ -598,7 +642,7 @@ export default function Selling({}: Props) {
             radius="none"
             size="lg"
             className="bg-stone-700 text-white w-full col-span-2"
-            onClick={()=>{
+            onClick={() => {
               if (state.barcode) {
                 setState({ ...state, barcode: "" });
               }

@@ -32,6 +32,7 @@ export type InvoiceRequestBody = {
   payment_method_id: number,
   user_id: number,
   items: InvoiceItem[],
+  invoice_type: "sale" | "return"
 }
 
 // use this type to inddicate row in invoice table
@@ -40,18 +41,11 @@ export type InvoiceItemType = {
   item_name: string,
   item_id: number,
   amount: number,
-  // unit?: string,
-  // unit_name?: string,
-  // pc_unit_name?: string,
-  // is_unit?: Boolean,
   price: number,
   pc_price: number,
-  // unit_price?: number,
   cost: number,  // cost is the subtotal cost
-  // unit_cost?: number,
   pc_cost: number,
   subtotal: number,
-  // pcs_per_unit?: number,
   total_available_pcs: number,
-  // total_available_units?: number,
+  valid_quantity_to_return: number
 }

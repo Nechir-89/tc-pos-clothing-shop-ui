@@ -1,116 +1,50 @@
-# POS for Single Point of Sale - Client 
-#### Version less than 2
+# POS SYSTEM FOR CLOTHING SHOP - UI
+This system is derived from previous system of POS for super market
 
-### Notes
-#### In this version, the following will not be editable
-- Item name
-- Item category
-- Pieces per unit
-- Unit name
-- Unit name of piece
-- Inputing date
+### Main changes
+We stoped using units and used pcs as primary unit to input and sell/return items. 
+this can change if future versions require more complex system for input items or selling them.
 
-#### Setting/Updating Stock Expire Date
-- Admin users can set/update expire date of stock.
-- Expire date is optional but higly recomended.
-- API URI: /api/stocks/update/expire_date
+We are starting with version 1.0.0
 
-#### Setting/Updating Stock Production Date
-- In version 1, users can not input item stock production date.
-- It also can not be updated or deleted.
+We originally build and installed this version as version 3.0.0
+However I feel we need to start off from version one as this POS system is 
+specific for Clothing shop and has different needs
 
-#### Setting/Updating Quantity of Expired Items in a Stock
-- It will be inapproparate for admin users to set a fraction of a stock as expired items.
-- Only all left in stock can be set as expired items.
-- Before setting stock to expire, the expire date must be set or provided.
-- Stocks can not be expired if no items left in stock.
-- Stocks can not be set expired if expired date has not met yet.
-- Next version must automaticaly set all left items in stock expired if stock met its expire date.
-- Cashiers should not be able to sell expired items.
-- Expired units and pcs do not cut off anything from total cost of stock.
-- Expired items are different than damaged items
-- API URI: /api/states/stocks/update/expire_stock
+This version can be used for production purposes
+And we installed this version for a clothing shop with no problems
 
-### Updating barcodes (barcode and pc barcode)
-- barcodes can be null in db but version 1 sets empty string for items with no barcode/s
-- Editing barcodes requires at least one non empty barcode (i.e barcode or pc barcode or both of them must be provided)
-- When editing barcodes they should not be same as the old barcodes (i.e at least one of barcodes must be different)
-- API URI: /api/stocks/update/barcodes
+This system works great, However it lacks primary features
+like 
+1. returning an item
+1. invoices page
+1. Complex statistic
+1. Shop expenses (rent, electericity, cashier, and other expenses)
+1. Dynamic shop information for invoice 
+1. Systme must run for one year only
 
-### Add/Update damaged quantity
-- This will update version from 1.1.5 to 1.1.6
-- solid_units and solid_pcs are still unused fields
-- Adding quantity of damaged items should not exced current number of available units plus previously damaged items
-  (Max Units = Current Units + Proviously Damaged Units)
-  (Max Pcs = Current Pcs + Proviously Damaged Pcs)
-- When editing damaged items they should not be same as the old quantity of damaged items
-- To prevent errors there is only pieces input for damaged quantity
-- API URI: /api/states/stocks/update/damaged_items
+### VERSION 1.1.0
+- This minor version introduces return items feature
+- invoices type can be either "sale" or "return"
+  "sale" for saling items
+  "return" for returning invoices
 
+- Client side expected to pass invoice type to server so it can handle request
+- Client side is also expected to gurntee returned quantity is valid
+  (when returning items, the system will check if the item's total available pcs 
+  is less than the sum of the items from all stocks for that item)
 
-### Starting from version 1.1.6
-- Decimal point precision **bug** can raise any time in following components
-  - stock page (addNewStock)
-  - new item page (addNewItem)
-  - setting damaged items from setDamagedItemsModel component (setDamagedItems)
-  - setting returned pcs to wholesaler in ReturnToWholesaler compnent
+- max quantity to return will be sum of amoun in pc - total available pieces
+- max quantity for customer to buy will be total availalbe pcs
 
-### Returning to Wholesaler/supplier
-- This will update version from 1.1.6 to 1.1.7
-- API URI: /api/states/stocks/update/returned_to_wholesaler
+- return money to customer can be in cash or other ways (cashier must specify)
 
-### Deleting stock
-- This will set app version to 1.2.7
-- condition for deleting stock to meet
-  - it should not be solid 
-  - it should have no expired pcs
-  - it should have no returned pcs
-  - it should have no damaged pcs
-- API URI: /api/stocks/delete
+- when cashier scans same item more than one time there is possibility to run 
+  into error as system doesn't check sum of amount in pcs and forgive button will be cut button (This problem got fixed) 
+  however when inputing number of returned items it could still go wrong.
 
-### Updating stock quantity
-- This will set version to 1.2.8
-- **New inputed quantity** must be greater than the used quantity (New >= Used)
-- **Used quantity** is sum of solid quantity, expired quantity, damaged quantity, gifted quantity, and returned quantity to wholesaler
-- To find used quantity:
-  used_quantity = amount_in_units - current_units
-- New quantity must not be equals to previous quantity
-- API URI: /api/stocks/update/amount_in_units
+- whene it is return invoice, the receipt must be labeled as returned invoice
 
-### Updating stock cost and price
-- This will set version to 1.2.9
-- The new cost and price must be different than prevously inputed
-- This update can be used also for offering discounts
-- Pc cost must not be in fractions
-
-### Payment method feature
-- This will set version to 1.3.9
-- API URI: 
-    - Get all payment methods (get): /api/payment_methods
-    - Get active payment methods (get): /api/payment_methods/active
-    - Add payment method (post): /api/payment_methods/add
-    - Set (toggle) payment method active/inactive (put): /api/payment_methods/toggle
-    - Set payment method default (put): /api/payment_methods/default
-    - Change payment method name (put): /api/payment_methods/change_name
-- Not all methods can be disabled/inactive
-- New added method can be set to default
-- Payment method can not be deleted but it can be inactive
-- Inactive payment method can not be set to default method
-
-### Printing Invoice
-- This will set client app version to 1.4.9
-- Printing invoice before saving it will not have invoice id
-- printed time and date are pointing to current time and date of system, next versions must fix this problem.
-
-### Fixing bug: displaying zero stock for non scan items
-- This will set client version to 2.4.10
-- When clicking non-scan items button, the application displays all stocks even those that are no longer left anything in the stock
+- in dashboard we must check invoice type is sale or return so we could drive statistics.
 
 
-### Features and Ideas
-- It would be greate if cashier gets a message for selling expired items
-- Add dollar currancy
-- have a button to make all left in stock damaged
-- It would be better to have a model with calculator when cashier clicks on pay button,
-  we could also add payment method to the model
-- 

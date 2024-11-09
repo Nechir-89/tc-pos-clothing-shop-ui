@@ -8,15 +8,16 @@ import { InvoiceContext, InvoiceContextType } from "../../contexts/InvoiceContex
 
 type Props = {}
 
+// gifft or cut
 export default function Gifft({ }: Props) {
-  const { setGifft, totalPriceOfInvoice } = useContext(InvoiceContext) as InvoiceContextType
+  const { setGifft, totalPriceOfInvoice, invoiceType } = useContext(InvoiceContext) as InvoiceContextType
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [gifftAmount, setGifftAmount] = useState<number>(250)
 
   return (
-    <div className='col-span-1 w-full'>
-      <Button onPress={onOpen} radius='none' size='lg' className='bg-forestGreen text-white w-full' >
-        پێهێلان / سماح
+    <div className='col-span-3 w-full'>
+      <Button onPress={onOpen} radius='none' size='lg' className={`${invoiceType==='sale'? 'bg-forestGreen': 'bg-yellow-700'}  text-white w-full`} >
+        {invoiceType==='sale'? 'پێهێلان': 'برین'}
       </Button>
       <Modal size="sm" dir="rtl" isOpen={isOpen} placement='auto' onOpenChange={onOpenChange} disableAnimation>
         <ModalContent>
