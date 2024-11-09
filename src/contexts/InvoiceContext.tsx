@@ -309,7 +309,7 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({
       setInvoiceCost(resp?.data[0]?.invoice_cost);
       setOffset((prevValue) => prevValue + 1);
       setInvoiceId(resp?.data[0]?.invoice_id);
-
+      setInvoiceType(resp?.data[0]?.invoice_type);
       const prevInvoiceItems = resp?.data?.map(
         (invoiceItme, index): InvoiceItemType => ({
           number: index + 1,
@@ -340,7 +340,7 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({
         setInvoiceCost(resp?.data[0]?.invoice_cost);
         setOffset((prevValue) => prevValue - 1);
         setInvoiceId(resp?.data[0]?.invoice_id);
-
+        setInvoiceType(resp?.data[0]?.invoice_type);
         const prevInvoiceItems = resp?.data?.map(
           (invoiceItme, index): InvoiceItemType => ({
             number: index + 1,
@@ -368,8 +368,8 @@ const InvoiceProvider: React.FC<{ children: React.ReactNode }> = ({
       setTotalPriceOfInvoice(resp?.data[0]?.invoice_price);
       setGifft(resp?.data[0]?.gifted_amount);
       setInvoiceCost(resp?.data[0]?.invoice_cost);
-      // setOffset(prevValue => prevValue + 1)
       setInvoiceId(resp?.data[0]?.invoice_id);
+      setInvoiceType(resp?.data[0]?.invoice_type);
 
       const items = resp?.data?.map(
         (invoiceItme, index): InvoiceItemType => ({

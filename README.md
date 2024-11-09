@@ -50,9 +50,12 @@ like
 
 ### VERSION 1.1.1: Enable Backspace button
   On saling page enable backspace button
-  
+
 ### VERSION 1.1.2: Enable Delete button
   On saling page enable delete button
+### VERSION 1.1.3: Enable Delete button
+  Change invoice type to sale or return when searching for invoice or
+  when clicking next invoice or previous invoice buttons
 
 ### VERSION 1.1.3: Add invoice type to invoice receipt
 

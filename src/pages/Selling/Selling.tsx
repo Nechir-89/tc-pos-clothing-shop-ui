@@ -28,7 +28,6 @@ import {
 } from "react-icons/fa6";
 import { TiArrowSortedDown, TiArrowSortedUp } from "react-icons/ti";
 import { BiSolidLeftArrow, BiSolidRightArrow } from "react-icons/bi";
-import { GoDotFill } from "react-icons/go";
 import { IoIosLogOut } from "react-icons/io";
 import extractTimeFromDate from "../../helpers/extractTimeFromDate";
 import ChangeAmount from "../../components/ChangeAmount";
