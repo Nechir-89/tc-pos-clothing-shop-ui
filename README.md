@@ -48,6 +48,12 @@ like
 
 - in dashboard we must check invoice type is sale or return so we could drive statistics.
 
-### VERSION 1.1.1: Add invoice type to invoice receipt
+### VERSION 1.1.1: Enable Backspace button
+  On saling page enable backspace button
+  
+### VERSION 1.1.2: Enable Delete button
+  On saling page enable delete button
+
+### VERSION 1.1.3: Add invoice type to invoice receipt
 
 ### VERSION 1.2.0: Add reports

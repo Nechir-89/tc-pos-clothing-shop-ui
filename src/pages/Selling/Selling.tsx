@@ -212,9 +212,7 @@ export default function Selling({}: Props) {
           ) : (
             <div className={`w-80 flex items-center	gap-x-2 pl-4`}>
               <FaCartArrowDown className="text-[32px] text-yellow-700" />
-              <span className="text-yellow-700">
-              زڤراندن
-              </span>
+              <span className="text-yellow-700">زڤراندن</span>
               <span className="font-bold text-yellow-700">
                 {formatNumberWithComma(totalPriceOfInvoice - gifft)}
                 <sub className="font-normal	text-sm	"> IQD</sub>
@@ -324,7 +322,9 @@ export default function Selling({}: Props) {
                             itemNumber={item.number}
                             variant="icon"
                             availableAmount={item.total_available_pcs}
-                            validQuantityToReturn={item.valid_quantity_to_return}
+                            validQuantityToReturn={
+                              item.valid_quantity_to_return
+                            }
                             invoiceType={invoiceType}
                           />
                         </span>
@@ -561,13 +561,17 @@ export default function Selling({}: Props) {
         </div>
         {/* . 0 00  */}
         <div className="grid grid-cols-9 gap-2 mb-2">
-          <Button
-            isDisabled
+        <Button
             radius="none"
             size="lg"
-            className="bg-gray-600 text-white w-full col-span-2"
+            className="bg-stone-700 text-white w-full col-span-2"
+            onClick={() => {
+              if (state.barcode) {
+                setState({ ...state, barcode: "" });
+              }
+            }}
           >
-            <GoDotFill className="text-xs" />
+            Clear
           </Button>
           <Button
             radius="none"
@@ -641,20 +645,24 @@ export default function Selling({}: Props) {
           <Button
             radius="none"
             size="lg"
-            className="bg-stone-700 text-white w-full col-span-2"
+            className="bg-gray-600 text-white w-full col-span-2"
             onClick={() => {
               if (state.barcode) {
-                setState({ ...state, barcode: "" });
+                setState({ ...state, barcode: state.barcode.slice(1) });
               }
             }}
           >
-            Clear
+            Del
           </Button>
           <Button
-            isDisabled
             radius="none"
             size="lg"
             className="bg-gray-600 text-white w-full col-span-2"
+            onClick={() => {
+              if (state.barcode) {
+                setState({ ...state, barcode: state.barcode.slice(0, -1) });
+              }
+            }}
           >
             Backspace
           </Button>
